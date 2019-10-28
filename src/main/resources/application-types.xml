@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="consumers" format="json">
+      <types:shape format="weave" example="inputPayload"><![CDATA[%dw 2.0
+
+type consumers = Array<{|  id: String,   name: String,   amt_purchased: Number {"typeId": "int"},   location: String|}> {"example": "[{\"id\":\"106\",\"name\":\"Rose Hudson\",\"amt_purchased\":39405,\"location\":\"Brookfield\"},{\"id\":\"120\",\"name\":\"Bishop Rice\",\"amt_purchased\":88709,\"location\":\"Valle\"},{\"id\":\"108\",\"name\":\"Anne Finley\",\"amt_purchased\":65292,\"location\":\"Florence\"},{\"id\":\"109\",\"name\":\"Rosario Bartlett\",\"amt_purchased\":22985,\"location\":\"Gordon\"},{\"id\":\"110\",\"name\":\"Gilbert Forbes\",\"amt_purchased\":8031,\"location\":\"Monument\"},{\"id\":\"111\",\"name\":\"Mae Carrillo\",\"amt_purchased\":39656,\"location\":\"Allentown\"},{\"id\":\"112\",\"name\":\"Sally Chandler\",\"amt_purchased\":65193,\"location\":\"Jeff\"},{\"id\":\"113\",\"name\":\"Janette Castillo\",\"amt_purchased\":48295,\"location\":\"Foxworth\"},{\"id\":\"114\",\"name\":\"Trina Wagner\",\"amt_purchased\":95205,\"location\":\"Crawfordsville\"},{\"id\":\"115\",\"name\":\"Nita Love\",\"amt_purchased\":20513,\"location\":\"Foscoe\"},{\"id\":\"107\",\"name\":\"Nita Love\",\"amt_purchased\":20513,\"location\":\"Foscoe\"}]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#dc84f8c8-27dc-4ce1-aa62-d68239e80ac6">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="consumers"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

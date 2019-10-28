@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="6f0d7feb-4991-4052-974a-6a39a5edfcc9" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="mydb" />
+	</db:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="547b993e-0f28-4cfe-a4b3-6c24d7ed0f60" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="bulk_insertFlow" doc:id="69a21f76-5887-4238-8d49-d5eaacc9da0a" >
+		<http:listener doc:name="Listener" doc:id="f4b9c602-fa05-47f7-a94a-100c6df4de60" config-ref="HTTP_Listener_config" path="/bulkInsert"/>
+		<logger level="INFO" doc:name="Logger" doc:id="0701ca48-99e5-4193-af91-a661cc81005f" message="request recieved"/>
+		<!-- <ee:transform doc:name="Transform Message" doc:id="dc84f8c8-27dc-4ce1-aa62-d68239e80ac6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+payload map {
+	 
+	 id: $.id,
+	 name: $.name,
+	 amt: $.amt_purchased,
+	 location: $.location
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform> -->
+		<logger level="INFO" doc:name="Logger" doc:id="6ea12949-c94f-41b4-86e8-02dfd9c19334" message="after transform message #[payload]"/>
+		<db:bulk-insert doc:id="65311363-4b78-41a0-b60b-55d8d232d4d8" config-ref="Database_Config">
+			<db:sql >insert into  customer(customerId, customername,amount_purchased,location)values(:id,:name,:amt,:location);</db:sql>
+		</db:bulk-insert>
+		<ee:transform doc:name="Transform Message" doc:id="7b84ec87-4d7e-4f67-8fcc-59351c897bff" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b7d6df8f-4648-4e9b-afa8-d0af95ebec68" message="inserted successfully #[payload]"/>
+	</flow>
+</mule>
